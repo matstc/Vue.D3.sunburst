@@ -86,7 +86,7 @@ export default {
       .attr("width", this.width)
       .attr("height", 50)
       .attr("class", "trail")
-      .style("overflow", "visible");
+      // .style("overflow", "visible");
     // Add the label at the end, for the percentage.
     trail
       .append("svg:text")
@@ -109,6 +109,17 @@ export default {
         points.push(this.tailWidth + "," + this.itemHeight / 2);
       }
       return points.join(" ");
+    },
+
+    /**
+     * @private
+     */
+    truncate(string) {
+      if (string.length < (this.itemWidth / 2)) {
+        return string
+      }
+
+      return string.substring(0, this.itemWidth / 2 - 1) + "…"
     },
 
     /**
@@ -146,10 +157,12 @@ export default {
         .attr("width", this.itemWidth - this.tailWidth)
         .attr("heigth", this.itemHeight)
         .insert("svg:text")
-        .attr("x", this.itemWidth / 2)
+        .attr("x", "0.5em")
         .attr("y", this.itemHeight / 2)
         .attr("dy", "0.25em")
-        .attr("text-anchor", "middle")
+        // .attr("text-anchor", "middle")
+        .text(d => this.truncate(d.name))
+        .insert("title")
         .text(d => d.name);
 
       let originIndex = this.from === null ? 0 : this.items.indexOf(this.from);
