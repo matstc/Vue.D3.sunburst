@@ -1,6 +1,5 @@
 <template>
-  <div class="bread-sequence">
-  </div>
+  <div class="bread-sequence"></div>
 </template>
 <script>
 import { select } from "d3-selection";
@@ -78,6 +77,13 @@ export default {
       required: false,
       type: Number,
       default: 10
+    },
+    /**
+     * Callback called for each bread crumb so caller can customize the SVG directly
+     */
+    extraContent: {
+      required: false,
+      type: Function
     }
   },
   mounted() {
@@ -85,8 +91,8 @@ export default {
       .append("svg:svg")
       .attr("width", this.width)
       .attr("height", 50)
-      .attr("class", "trail")
-      // .style("overflow", "visible");
+      .attr("class", "trail");
+    // .style("overflow", "visible");
     // Add the label at the end, for the percentage.
     trail
       .append("svg:text")
@@ -115,11 +121,11 @@ export default {
      * @private
      */
     truncate(string) {
-      if (string.length < (this.itemWidth / 2)) {
-        return string
+      if (string.length < this.itemWidth / 6) {
+        return string;
       }
 
-      return string.substring(0, this.itemWidth / 2 - 1) + "…"
+      return string.substring(0, this.itemWidth / 2 - 1) + "…";
     },
 
     /**
@@ -150,20 +156,25 @@ export default {
         .attr("points", this.breadcrumbPoints)
         .style("fill", this.colorGetter);
 
-      entering
+      const crumb = entering
         .append("svg")
         .attr("x", this.tailWidth)
         .attr("y", 0)
         .attr("width", this.itemWidth - this.tailWidth)
-        .attr("heigth", this.itemHeight)
+        .attr("heigth", this.itemHeight);
+
+      crumb
         .insert("svg:text")
         .attr("x", "0.5em")
         .attr("y", this.itemHeight / 2)
         .attr("dy", "0.25em")
-        // .attr("text-anchor", "middle")
         .text(d => this.truncate(d.name))
         .insert("title")
         .text(d => d.name);
+
+      if (this.extraContent) {
+        this.extraContent(crumb, this);
+      }
 
       let originIndex = this.from === null ? 0 : this.items.indexOf(this.from);
       originIndex = originIndex < 0 ? this.items.length : originIndex;

@@ -1,7 +1,18 @@
 <template>
   <breadcrumb
-    :style="{'order':order}"
-    v-bind="{colorGetter, endText, from: fromItem, itemHeight, itemWidth, items, spacing, tailWidth, width}"
+    :style="{ order: order }"
+    v-bind="{
+      colorGetter,
+      endText,
+      from: fromItem,
+      itemHeight,
+      itemWidth,
+      items,
+      spacing,
+      tailWidth,
+      width,
+      extraContent
+    }"
   />
 </template>
 <script>
@@ -91,6 +102,13 @@ export default {
       required: false,
       type: Number,
       default: 10
+    },
+    /**
+     * Callback called for each bread crumb so caller can customize the SVG directly
+     */
+    extraContent: {
+      required: false,
+      type: Function
     }
   },
   computed: {
