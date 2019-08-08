@@ -11,7 +11,8 @@
       spacing,
       tailWidth,
       width,
-      extraContent
+      extraContent,
+      onAppend
     }"
   />
 </template>
@@ -107,6 +108,13 @@ export default {
      * Callback called for each bread crumb so caller can customize the SVG directly
      */
     extraContent: {
+      required: false,
+      type: Function
+    },
+    /**
+     * Callback called when list of breadcrumbs changes
+     */
+    onAppend: {
       required: false,
       type: Function
     }

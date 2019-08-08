@@ -84,6 +84,13 @@ export default {
     extraContent: {
       required: false,
       type: Function
+    },
+    /**
+     * Callback called when list of breadcrumbs changes
+     */
+    onAppend: {
+      required: false,
+      type: Function
     }
   },
   mounted() {
@@ -120,22 +127,10 @@ export default {
     /**
      * @private
      */
-    truncate(string) {
-      if (string.length < this.itemWidth / 6) {
-        return string;
-      }
-
-      return string.substring(0, this.itemWidth / 2 - 1) + "…";
-    },
-
-    /**
-     * @private
-     */
     draw() {
       if (this.items.length === 0) {
-        select(this.$el)
-          .select(".trail")
-          .style("visibility", "hidden");
+        select(this.$el).select(".trail");
+        // .style("visibility", "hidden");
         return;
       }
 
@@ -168,7 +163,7 @@ export default {
         .attr("x", "0.5em")
         .attr("y", this.itemHeight / 2)
         .attr("dy", "0.25em")
-        .text(d => this.truncate(d.name))
+        .text(d => d.name)
         .insert("title")
         .text(d => d.name);
 
@@ -191,8 +186,9 @@ export default {
         );
 
       // Now move and update the percentage at the end.
-      select(this.$el)
-        .select(".trail")
+      let crumbs = select(this.$el).select(".trail");
+
+      crumbs
         .select(".endlabel")
         .attr(
           "x",
@@ -203,6 +199,10 @@ export default {
         .attr("dy", "0.25em")
         .attr("text-anchor", "left")
         .text(this.endText);
+
+      if (this.onAppend) {
+        this.onAppend(crumbs);
+      }
 
       select(this.$el)
         .select(".trail")
